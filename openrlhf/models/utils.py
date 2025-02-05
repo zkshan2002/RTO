@@ -34,6 +34,7 @@ def compute_reward(
     log_probs_base: torch.Tensor,
     action_mask: Optional[torch.Tensor] = None,
     num_actions: Optional[Union[int, list[int]]] = None,
+    token_reward: Optional[torch.Tensor] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     if kl_coef <= 0.0:
         kl_coef = 0.0
@@ -64,8 +65,12 @@ def compute_reward(
         for i, action_len in enumerate(num_actions):
             last_reward[0, offset + action_len - 1] = r[i]
             offset += action_len
+        if token_reward is not None:
+            raise NotImplementedError
 
     reward = last_reward + kl_reward
+    if token_reward is not None:
+        reward = reward + token_reward
     return reward, kl
 
 

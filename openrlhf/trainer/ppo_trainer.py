@@ -78,6 +78,10 @@ class PPOTrainer(ABC):
         dataloader_pin_memory: bool = True,
         remote_rm_url: str = None,
         reward_fn: Callable[[List[torch.Tensor]], torch.Tensor] = None,
+        # RTO
+        dpo_model: Optional[Actor] = None,
+        dpo_ref: Optional[Actor] = None,
+        rl_config: Dict[str, Any] = {},
         **generate_kwargs,
     ) -> None:
         assert (
@@ -137,6 +141,9 @@ class PPOTrainer(ABC):
             strategy,
             remote_rm_url,
             reward_fn,
+            dpo_model,
+            dpo_ref,
+            rl_config,
         )
         packing_samples = getattr(self.args, "packing_samples", False)
         self.replay_buffer = NaiveReplayBuffer(

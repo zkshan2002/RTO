@@ -87,6 +87,30 @@ def train(args):
     )
     get_tokenizer(args.pretrain, initial_model.model, "left", strategy)
 
+    if args._use_dpo:
+        dpo_model = Actor(
+            args.dpo_pretrain,
+            use_flash_attention_2=args.flash_attn,
+            bf16=args.bf16,
+            load_in_4bit=args.load_in_4bit,
+            ds_config=strategy.get_ds_eval_config(offload=False),
+        )
+        strategy.print(dpo_model)
+    else:
+        dpo_model = None
+    
+    if args._use_dpo_ref:
+        dpo_ref = Actor(
+            args.dpo_ref,
+            use_flash_attention_2=args.flash_attn,
+            bf16=args.bf16,
+            load_in_4bit=args.load_in_4bit,
+            ds_config=strategy.get_ds_eval_config(offload=False),
+        )
+        strategy.print(dpo_ref)
+    else:
+        dpo_ref = None
+
     if args.enable_ema:
         ema_model = Actor(
             args.pretrain,
@@ -187,13 +211,11 @@ def train(args):
     (
         (actor, actor_optim, actor_scheduler),
         (critic, critic_optim, critic_scheduler),
-        reward_model,
-        initial_model,
+        reward_model, initial_model, dpo_model, dpo_ref,
     ) = strategy.prepare(
         (actor, actor_optim, actor_scheduler),
         (critic, critic_optim, critic_scheduler),
-        reward_model,
-        initial_model,
+        reward_model, initial_model, dpo_model, dpo_ref,
         is_rlhf=True,
     )
 
@@ -248,6 +270,10 @@ def train(args):
         eos_token_id=tokenizer.eos_token_id,
         # remote reward model
         remote_rm_url=args.remote_rm_url,
+        # RTO
+        dpo_model=dpo_model,
+        dpo_ref=dpo_ref,
+        rl_config=args._rl_config,
     )
 
     trainer.fit(args, prompts_dataloader, pretrain_dataloader, consumed_samples, num_update_steps_per_episodes)
@@ -269,6 +295,13 @@ def train(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    
+    # RTO
+    parser.add_argument("--dpo_pretrain", type=str, default=None, help="HF model name or path, activate RTO")
+    parser.add_argument("--dpo_ref", type=str, default=None, help="HF model name or path. If unset, reuse the reference model")
+    parser.add_argument("--dpo_reward_scale", type=float, default=1.0, help="beta_1")
+    parser.add_argument("--dpo_reward_clip", type=float, default=0, help="set to clip the absolute value of token rewards")
+    
     # Checkpoint
     parser.add_argument("--save_path", type=str, default="./ckpt")
     parser.add_argument("--save_steps", type=int, default=-1)
@@ -390,4 +423,14 @@ if __name__ == "__main__":
     if args.input_template and not "{}" in args.input_template:
         print("[Warning] {} not in args.input_template, set to None")
         args.input_template = None
+    
+    args._use_dpo = args.dpo_pretrain is not None
+    args._use_dpo_ref = args._use_dpo and args.dpo_ref is not None and args.dpo_ref != args.pretrain
+    args._rl_config = {}
+    for argument in [
+        "dpo_reward_scale",
+        "dpo_reward_clip",
+    ]:
+        args._rl_config[argument] = getattr(args, argument)
+    
     train(args)

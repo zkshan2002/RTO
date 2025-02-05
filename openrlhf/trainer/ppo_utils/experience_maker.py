@@ -3,7 +3,7 @@ import time
 from abc import ABC
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Dict, Any
 
 import ray
 import torch
@@ -99,6 +99,9 @@ class NaiveExperienceMaker(ABC):
         strategy=None,
         remote_rm_url: str = None,
         reward_fn=None,
+        dpo_model: Optional[Actor] = None,
+        dpo_ref: Optional[Actor] = None,
+        rl_config: Dict[str, Any] = {},
     ) -> None:
         super().__init__()
         self.actor = actor
@@ -111,6 +114,12 @@ class NaiveExperienceMaker(ABC):
         self.kl_ctl = kl_controller
         self.strategy = strategy
         self.reward_fn = reward_fn
+
+        self._use_dpo = dpo_model is not None
+        self._use_dpo_ref = dpo_ref is not None
+        self._dpo_model = dpo_model
+        self._dpo_ref = dpo_ref
+        self._rl_config = rl_config
 
     # tokenizer
     def tokenize_fn(self, texts, max_length, padding=True, device=None):
@@ -163,12 +172,20 @@ class NaiveExperienceMaker(ABC):
             # local RM
             r = self.reward_model(sequences, attention_mask)
 
+        if self._use_dpo:
+            dpo_rewards = self._compute_dpo_rewards(
+                sequences, num_actions, attention_mask, base_action_log_probs, action_mask,
+            )
+        else:
+            dpo_rewards = None
+
         reward, kl = compute_reward(
             r,
             self.kl_ctl.value,
             action_log_probs,
             base_action_log_probs,
             action_mask=action_mask,
+            token_reward=dpo_rewards,
         )
         advantage, returns = self.get_advantages_and_returns(
             value,
@@ -199,6 +216,20 @@ class NaiveExperienceMaker(ABC):
             action_mask,
             info,
         )
+
+    @torch.inference_mode()
+    def _compute_dpo_rewards(self, sequences, num_actions, attention_mask, base_action_log_probs, action_mask):
+        dpo_action_log_probs = self._dpo_model(sequences, num_actions, attention_mask)
+        dpo_rewards = (dpo_action_log_probs - base_action_log_probs) * action_mask
+
+        scale = self._rl_config["dpo_reward_scale"]
+        if scale != 1.0 and scale > 0:
+            dpo_rewards = dpo_rewards * scale
+        
+        clip = self._rl_config["dpo_reward_clip"]
+        if clip > 0:
+            dpo_rewards = torch.clamp(dpo_rewards, min=-clip, max=clip)
+        return dpo_rewards
 
     @torch.no_grad()
     def get_advantages_and_returns(
