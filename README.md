@@ -5,13 +5,15 @@ TL;DR: Based on theoretical insights, we propose Reinforced Token Optimization (
 
 ## Model Releases and Evaluation Results
 We release all model checkpoints in this [Huggingface Repo](https://huggingface.co/RTO-RL), which includes
-- **SFT** [[Llama-3-8b-sft-mixture](https://huggingface.co/OpenRLHF/Llama-3-8b-sft-mixture)]: 
-- **DPO** [[Llama3-8B-DPO](https://huggingface.co/RTO-RL/Llama3-8B-DPO)]: 
-- **R-DPO** [[Llama3-8B-RDPO](https://huggingface.co/RTO-RL/Llama3-8B-RDPO)]:
-- **SimPO** [[Llama3-8B-SimPO](https://huggingface.co/RTO-RL/Llama3-8B-SimPO)]
-- **TDPO** [[Llama3-8B-TDPO](https://huggingface.co/RTO-RL/Llama3-8B-TDPO)]
-- **PPO** [[Llama3-8B-PPO](https://huggingface.co/RTO-RL/Llama3-8B-PPO)]
-- **RTO** [[Llama3-8B-RTO](https://huggingface.co/RTO-RL/Llama3-8B-RTO)] 
+- **SFT** [[OpenRLHF/Llama-3-8b-sft-mixture](https://huggingface.co/OpenRLHF/Llama-3-8b-sft-mixture)]: An open-source SFT model that finetunes [Llama-3-8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B) with a diverse mixture of high-quality data.
+- **DPO** [[Llama3-8B-DPO](https://huggingface.co/RTO-RL/Llama3-8B-DPO)]: Apply Direct Preference Optimization algorithm on the **SFT** model.
+- **R-DPO** [[Llama3-8B-RDPO](https://huggingface.co/RTO-RL/Llama3-8B-RDPO)]: Apply R-Direct Preference Optimization algorithm on the **SFT** model.
+- **SimPO** [[Llama3-8B-SimPO](https://huggingface.co/RTO-RL/Llama3-8B-SimPO)]: Apply Simple Preference Optimization algorithm on the **SFT** model.
+- **TDPO** [[Llama3-8B-TDPO](https://huggingface.co/RTO-RL/Llama3-8B-TDPO)]: Apply Token-level Direct Preference Optimization algorithm on the **SFT** model.
+- **PPO** [[Llama3-8B-PPO](https://huggingface.co/RTO-RL/Llama3-8B-PPO)]: Apply Proximal Policy Optimization algorithm on the **SFT** model, optimizing [this reward model](https://huggingface.co/RTO-RL/Llama3-8B-RewardModel).
+- **RTO** [[Llama3-8B-RTO](https://huggingface.co/RTO-RL/Llama3-8B-RTO)]: Apply Reinforced Token Optimization algorithm on the **SFT** model, optimizing [this DPO reward model](https://huggingface.co/RTO-RL/Llama3-8B-DPO) and [this reward model](RTO-RL/Llama3.2-1B-RewardModel).
+
+We use the UltraFeedback dataset. All preference learning uses [a binarized version](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized), while all reinforcement learning uses [a prompt-only version](https://huggingface.co/datasets/weqweasdas/ultra_train).
 
 
 We evaluate  these models using the popular benchmarks [AlpacaEval 2](https://github.com/tatsu-lab/alpaca_eval) and [Arena-Hard](https://github.com/lm-sys/arena-hard-auto), and report the AlpacaEval 2 (raw win rate version and length-controlled version) and Arena-Hard scores (raw win rate version and style-controlled version) in the following table.
