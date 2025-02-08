@@ -3,6 +3,8 @@ This repository contains the source code for our paper [DPO Meets PPO: Reinforce
 
 TL;DR: Based on theoretical insights, we propose Reinforced Token Optimization (RTO), a more sample efficient and effective RLHF algorithm than Proximal Policy Optimization (PPO). RTO outperforms PPO, Direct Preference Optimization (DPO) and other baselines on AlpacaEval 2 and Arena-Hard benchmarks by a large margin. 
 
+![Illustration of RTO](./docs/illustration.png)
+
 ## Model Releases and Evaluation Results
 We release all model checkpoints in this [Huggingface Repo](https://huggingface.co/RTO-RL), which includes
 - **SFT** [[OpenRLHF/Llama-3-8b-sft-mixture](https://huggingface.co/OpenRLHF/Llama-3-8b-sft-mixture)]: An open-source SFT model that finetunes [Llama-3-8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B) with a diverse mixture of high-quality data.
