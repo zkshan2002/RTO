@@ -32,6 +32,8 @@ We evaluate  these models using the popular benchmarks [AlpacaEval 2](https://gi
 
 
 ## News
+- **[2025.2.12]** We updated our paper on [arxiv](https://arxiv.org/abs/2404.18922).
+- **[2025.2.7]** We released our code and models.
 - **[2024.4.29]** We released our paper on [arxiv](https://arxiv.org/abs/2404.18922).
 
 
