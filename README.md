@@ -5,6 +5,14 @@ TL;DR: Based on theoretical insights, we propose Reinforced Token Optimization (
 
 ![Illustration of RTO](./docs/illustration.png)
 
+
+## News
+- **[2025.5.1]** Our paper has been accepted at ICML 2025 (Spotlight)!
+- **[2025.2.12]** We updated our paper on [arxiv](https://arxiv.org/abs/2404.18922).
+- **[2025.2.7]** We released our code and models.
+- **[2024.4.29]** We released our paper on [arxiv](https://arxiv.org/abs/2404.18922).
+
+
 ## Model Releases and Evaluation Results
 We release all model checkpoints in this [Huggingface Repo](https://huggingface.co/RTO-RL), which includes
 - **SFT** [[OpenRLHF/Llama-3-8b-sft-mixture](https://huggingface.co/OpenRLHF/Llama-3-8b-sft-mixture)]: An open-source SFT model that finetunes [Llama-3-8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B) with a diverse mixture of high-quality data.
@@ -29,17 +37,6 @@ We evaluate  these models using the popular benchmarks [AlpacaEval 2](https://gi
 | [TDPO](https://huggingface.co/RTO-RL/Llama3-8B-TDPO) | 20.13 | 11.97 | 13.2 | 12.3 |
 | [PPO](https://huggingface.co/RTO-RL/Llama3-8B-PPO) | 19.47 | 12.89 | 16.2 | 15.6 |
 | [RTO](https://huggingface.co/RTO-RL/Llama3-8B-RTO) | **27.00** | **22.45** | **20.3** | **21.4** |
-
-
-## News
-- **[2025.2.12]** We updated our paper on [arxiv](https://arxiv.org/abs/2404.18922).
-- **[2025.2.7]** We released our code and models.
-- **[2024.4.29]** We released our paper on [arxiv](https://arxiv.org/abs/2404.18922).
-
-
-
-
-
 
 
 ## Install Requirements
