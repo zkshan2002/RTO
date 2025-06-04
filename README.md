@@ -61,7 +61,7 @@ This is set for 8xA100 GPUs. You may adjust `micro_rollout_batch_size` and `micr
 
 
 ## Hyperparameter Tuning
-Reinforcement learning algorithms may be sensitive to hyperparameter tuning. Based on OpenRLHF's well-tuned hyperparameters for PPO, the only additional parameter to tune is $\beta_1$ (`dpo_reward_scale` in code), the scale of DPO token rewards. Since the main contribution of DPO rewards is reward shaping rather than absolute gains, $\beta_1$ can be safely set to a small value. We recommand using $0.05$ as starting point, but the guideline is not to let DPO token rewards dominate.
+Reinforcement learning algorithms may be sensitive to hyperparameter tuning. Based on OpenRLHF's well-tuned hyperparameters for PPO, the only additional parameter to tune is $\beta_1$ (`dpo_reward_scale` in code), the scale of DPO token rewards. Since the main contribution of DPO rewards is reward shaping rather than absolute gains, $\beta_1$ can be safely set to a small value. We recommend using $0.05$ as starting point, but the guideline is not to let DPO token rewards dominate.
 
 
 
@@ -74,7 +74,7 @@ If you find the content of this repo useful, please consider cite it as follows:
 ```bibtex
 @article{zhong2024dpo,
   title={Dpo meets ppo: Reinforced token optimization for rlhf},
-  author={Zhong, Han and Feng, Guhao and Xiong, Wei and Cheng, Xinle and Zhao, Li and He, Di and Bian, Jiang and Wang, Liwei},
+  author={Zhong, Han and Shan, Zikang and Feng, Guhao and Xiong, Wei and Cheng, Xinle and Zhao, Li and He, Di and Bian, Jiang and Wang, Liwei},
   journal={arXiv preprint arXiv:2404.18922},
   year={2024}
 }
